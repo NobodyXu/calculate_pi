@@ -8,7 +8,7 @@
  * count number of points from a line that is in the circle R = 1.
  */
 template <class T>
-auto count_points_from_line_in_circle(T x, T gaps) -> std::uint64_t
+auto count_points_from_line_in_circle(T x, T gaps) -> T
 {
     if (x == 1 || x == -1)
         return 1;
@@ -16,10 +16,13 @@ auto count_points_from_line_in_circle(T x, T gaps) -> std::uint64_t
         // Any point which has x == 0 is in the circle of R = 1.
         return 2 / gaps;
 
-    T y = gaps;
-    std::uint64_t cnt = 0;
-    for (; x * x + y * y <= 1; y += gaps)
-        ++cnt;
+    // Calculate downwards is faster than upwards by roughly 3 times.
+    //
+    // It is due to the fact that the circle took > 50% of the surface
+    // area of the square, thus calculating downwards is faster.
+    T y = 1;
+    for (; y > 0 && x * x + y * y > 1; y -= gaps)
+        ;
 
     // Now y is the first that is in the circle
     // The rest of points that is in the circle and
@@ -30,7 +33,7 @@ auto count_points_from_line_in_circle(T x, T gaps) -> std::uint64_t
     //
     // y == 0 is a special case where it is always
     // in the circle, given any x.
-    return cnt * 2 + 1;
+    return (y / gaps) * 2 + 1;
 }
 
 #endif
