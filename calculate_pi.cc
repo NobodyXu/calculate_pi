@@ -28,7 +28,7 @@ T calculate_pi(T gaps) noexcept
     //                     = pi / 4
     //
     // So pi = S_circle / S_square * 4
-    return T(circle_S * 4) / square_S;
+    return circle_S / square_S * 4;
 }
 
 auto Strtold(const char *str) -> long double

@@ -59,7 +59,7 @@ auto count_points_from_line_in_circle2(T x, T &y, T gaps) -> T
     //
     // However, now that y is cached and x is guaranteed to be growing,
     // calculating upwards is faster.
-    for (; x * x + y * y <= 1; y += gaps)
+    for (; y <= 1 && x * x + y * y <= 1; y += gaps)
         ;
     y -= gaps;
 
