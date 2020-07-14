@@ -37,7 +37,7 @@ T calculate_pi(T gaps) noexcept
             ;
         y -= gaps;
 
-        pi += (y / gaps) * gaps * gaps;
+        pi += y * gaps;
     }
 
     return pi * 4;
