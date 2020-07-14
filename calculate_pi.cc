@@ -13,9 +13,20 @@ T calculate_pi(T gaps) noexcept
     T circle_S = 0;
     T square_S = 4 / (gaps * gaps);
 
-    for (T x = -1; x <= 1; x += gaps)
+    for (T x = -1; x < 0; x += gaps)
         circle_S += count_points_from_line_in_circle(x, gaps);
 
+    // number of points in circle that has x \in (-1, 0) is
+    // the same as points has x \in (0, 1) due to symmtry of the
+    // circle
+    circle_S *= 2;
+    // x == 0 is special: It should only be counted once
+    circle_S += count_points_from_line_in_circle(0.0L, gaps);
+
+    // S_circle / S_square = pi * ((1) ** 2) / (2 * 2)
+    //                     = pi / 4
+    //
+    // So pi = S_circle / S_square * 4
     return T(circle_S * 4) / square_S;
 }
 
