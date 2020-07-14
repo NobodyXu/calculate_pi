@@ -17,18 +17,24 @@ T calculate_pi(T gaps) noexcept
     for (T x = -1; x < 0; x += gaps)
         circle_S += count_points_from_line_in_circle2(x, y, gaps);
 
-    // number of points in circle that has x \in (-1, 0) is
-    // the same as points has x \in (0, 1) due to symmtry of the
-    // circle
-    circle_S *= 2;
-    // x == 0 is special: It should only be counted once
-    circle_S += count_points_from_line_in_circle2(0.0L, y, gaps);
-
     // S_circle / S_square = pi * ((1) ** 2) / (2 * 2)
     //                     = pi / 4
     //
     // So pi = S_circle / S_square * 4
-    return circle_S / square_S * 4;
+    //
+    // number of points in circle that has x \in (-1, 0) is
+    // the same as points has x \in (0, 1) due to symmtry of the
+    // circle
+    return circle_S / square_S * 8 + 
+           // x == 0 is special: It should only be counted once.
+           // Since it is probably too large, adding it to circle_S
+           // might make it overflow
+           //
+           //   (2 / gaps) / (4 / (gaps * gaps)) * 4
+           // = 8 / gaps / 4 * (gaps * gaps)
+           // = 2 / gaps * (gaps * gaps)
+           // = 2 * gaps
+           (gaps * 2);
 }
 
 auto Strtold(const char *str) -> long double
