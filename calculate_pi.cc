@@ -33,8 +33,9 @@ T calculate_pi(T gaps) noexcept
         //
         // However, now that y is cached and x is guaranteed to be growing,
         // calculating upwards is faster.
-        for (y += gaps; x * x + y * y <= 1; y += gaps)
-            ;
+        do {
+            y += gaps;
+        } while (x * x + y * y <= 1);
         y -= gaps;
 
         pi += y * gaps;
