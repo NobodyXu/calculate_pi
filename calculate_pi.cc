@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cinttypes>
 
 #include <cstdlib>
 #include <err.h>
@@ -9,32 +10,37 @@
 template <class T>
 T calculate_pi(T gaps) noexcept
 {
-    // can be interpretted as Surface area or Sum of the circle with R = 1
-    T circle_S = 0;
-    T square_S = 4 / (gaps * gaps);
-
-    T y = 0;
-    for (T x = -1; x < 0; x += gaps)
-        circle_S += count_points_from_line_in_circle2(x, y, gaps);
-
+    // S_square = 4 / (gaps * gaps);
+    // 
     // S_circle / S_square = pi * ((1) ** 2) / (2 * 2)
     //                     = pi / 4
     //
     // So pi = S_circle / S_square * 4
-    //
-    // number of points in circle that has x \in (-1, 0) is
-    // the same as points has x \in (0, 1) due to symmtry of the
-    // circle
-    return circle_S / square_S * 8 + 
-           // x == 0 is special: It should only be counted once.
-           // Since it is probably too large, adding it to circle_S
-           // might make it overflow
-           //
-           //   (2 / gaps) / (4 / (gaps * gaps)) * 4
-           // = 8 / gaps / 4 * (gaps * gaps)
-           // = 2 / gaps * (gaps * gaps)
-           // = 2 * gaps
-           (gaps * 2);
+    //       = 4 * S_circle / (4 / (gaps * gaps))
+    //       = S_circle * gaps * gaps
+
+    // y == 0 is a special case where it is always
+    // in the circle, given any x.
+    long double pi = (1 - gaps) * gaps;
+
+    T y = 0;
+    // Calculate 1 / 4 part of circle
+    for (T x = -1 + gaps; x < -0.0L; x += gaps) {
+        // Calculate downwards is faster than upwards by roughly 3 times.
+        //
+        // It is due to the fact that the circle took > 50% of the surface
+        // area of the square, thus calculating downwards is faster.
+        //
+        // However, now that y is cached and x is guaranteed to be growing,
+        // calculating upwards is faster.
+        for (y += gaps; x * x + y * y <= 1; y += gaps)
+            ;
+        y -= gaps;
+
+        pi += (y / gaps) * gaps * gaps;
+    }
+
+    return pi * 4;
 }
 
 auto Strtold(const char *str) -> long double
